@@ -11,16 +11,18 @@
 using namespace std;
 
 int v, e;
-bool near_arr1[1000][1000];
-bool near_arr2[1000][1000];
-bool check[1000];
+bool near_arr2[1001][1001];
+bool check[1001];
 vector<int> route;
 
 bool can_go(int num) {
 
 	for (int i = 1; i <= v; i++) {
-		if (near_arr2[i][num]) return false;
+		if (near_arr2[i][num]) {
+			return false;
+		}
 	}
+	
 	return true;
 
 }
@@ -28,8 +30,10 @@ bool can_go(int num) {
 bool can_go2(int from,int to) {
 
 	for (int i = 1; i <= v; i++) {
-		if (near_arr2[i][to]) {
-			if (!check[i]) return false;
+		if (from != i) {
+			if (near_arr2[i][to]) {
+				if (!check[i]) return false;
+			}
 		}
 	}
 	
@@ -40,8 +44,6 @@ void bfs(int num) {
 
 	queue<int> q;
 	q.push(num);
-
-	int i_cnt = 1;
 
 	check[num] = true;
 
@@ -55,7 +57,6 @@ void bfs(int num) {
 			if (near_arr2[now][i] && !check[i]) {
 				if (can_go2(now, i)) {
 					check[i] = true;
-					i_cnt++;
 					route.push_back(i);
 					q.push(i);
 				}
@@ -71,13 +72,13 @@ void bfs(int num) {
 void go() {
 
 	for (int i = 1; i <= v; i++) {
-		if (can_go(i)) {
+		if (can_go(i) && !check[i]) {
 			//printf("i : %d\n", i);
-			memset(check, false, sizeof(check));
 			route.push_back(i);
 			bfs(i);
 		}
 	}
+	
 
 
 }
@@ -93,6 +94,7 @@ int main() {
 
 	for (int test_case = 1; test_case <= 10; test_case++) {
 		memset(near_arr2, false, sizeof(near_arr2));
+		memset(check, false, sizeof(check));
 		route.clear();
 		cin >> v >> e;
 
@@ -104,7 +106,6 @@ int main() {
 		}
 		
 		go();
-
 
 		cout << "#" << test_case << " ";
 		for (int i = 0; i < route.size(); i++) {
